@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   FolderOpen,
+  Settings,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -21,15 +22,19 @@ const navItems = [
   },
   {
     label: "Chat",
-    href: "#",
+    href: "/chat",
     icon: MessageSquare,
-    comingSoon: true,
   },
   {
     label: "Cases",
     href: "#",
     icon: FolderOpen,
     comingSoon: true,
+  },
+  {
+    label: "Settings",
+    href: "/settings",
+    icon: Settings,
   },
 ];
 

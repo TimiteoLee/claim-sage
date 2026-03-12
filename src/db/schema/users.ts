@@ -7,8 +7,14 @@ export const users = pgTable("users", {
   emailVerified: timestamp("email_verified", { mode: "date" }),
   passwordHash: text("password_hash"),
   image: text("image"),
-  role: text("role", { enum: ["consumer", "adjuster", "attorney"] })
+  role: text("role", { enum: ["consumer", "adjuster", "attorney", "contractor"] })
     .default("consumer")
+    .notNull(),
+  aiProvider: text("ai_provider", { enum: ["claude", "openai"] })
+    .default("claude")
+    .notNull(),
+  subscriptionTier: text("subscription_tier", { enum: ["free", "pro"] })
+    .default("free")
     .notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),

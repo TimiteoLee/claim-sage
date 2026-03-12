@@ -14,6 +14,7 @@ const roleLabels: Record<string, string> = {
   consumer: "Consumer",
   adjuster: "Public Adjuster",
   attorney: "Attorney",
+  contractor: "Contractor",
 };
 
 const comingSoonCards = [

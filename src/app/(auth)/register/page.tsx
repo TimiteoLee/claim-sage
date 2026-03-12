@@ -4,7 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AlertTriangle, User, Scale, ClipboardCheck } from "lucide-react";
+import { AlertTriangle, User, Scale, ClipboardCheck, HardHat } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,6 +37,12 @@ const roles = [
     label: "Attorney",
     description: "Legal representation",
     icon: Scale,
+  },
+  {
+    value: "contractor",
+    label: "Contractor",
+    description: "Repair and restoration work",
+    icon: HardHat,
   },
 ] as const;
 

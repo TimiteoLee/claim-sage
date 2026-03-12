@@ -9,7 +9,7 @@ const registerSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email"),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  role: z.enum(["consumer", "adjuster", "attorney"]).default("consumer"),
+  role: z.enum(["consumer", "adjuster", "attorney", "contractor"]).default("consumer"),
 });
 
 export async function POST(req: Request) {
