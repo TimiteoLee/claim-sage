@@ -8,6 +8,7 @@ import { Topbar } from "@/components/layout/topbar";
 const pageTitles: Record<string, string> = {
   "/dashboard": "Dashboard",
   "/chat": "Chat",
+  "/documents": "Documents",
   "/settings": "Settings",
 };
 

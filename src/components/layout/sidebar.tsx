@@ -6,6 +6,7 @@ import {
   Shield,
   LayoutDashboard,
   MessageSquare,
+  FileText,
   FolderOpen,
   Settings,
   X,
@@ -24,6 +25,11 @@ const navItems = [
     label: "Chat",
     href: "/chat",
     icon: MessageSquare,
+  },
+  {
+    label: "Documents",
+    href: "/documents",
+    icon: FileText,
   },
   {
     label: "Cases",
