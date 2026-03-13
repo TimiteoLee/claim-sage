@@ -24,6 +24,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import type { ClaimStatus } from "@/db/schema/claims";
+
 interface Claim {
   id: string;
   title: string;
@@ -31,7 +33,7 @@ interface Claim {
   insurance_company: string | null;
   policy_number: string | null;
   claim_number: string | null;
-  status: string;
+  status: ClaimStatus;
   date_of_loss: string | null;
   claim_amount: string | null;
   created_at: string;

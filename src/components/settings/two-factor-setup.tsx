@@ -19,19 +19,6 @@ export function TwoFactorSetup() {
   const [showDisable, setShowDisable] = useState(false);
 
   useEffect(() => {
-    async function checkStatus() {
-      try {
-        const res = await fetch("/api/2fa/setup", { method: "GET" });
-        // GET isn't defined, so we check via a different approach
-        // We'll just check the status on mount by trying to see if there's an existing verified secret
-        // Since we don't have a GET endpoint, we'll use a simple status check
-        setStatus("disabled");
-      } catch {
-        setStatus("disabled");
-      }
-    }
-
-    // Check 2FA status via a dedicated lightweight call
     async function check2FAStatus() {
       try {
         const res = await fetch("/api/2fa/status");
