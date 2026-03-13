@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   FileText,
+  BookOpen,
   FolderOpen,
   Settings,
   X,
@@ -30,6 +31,11 @@ const navItems = [
     label: "Documents",
     href: "/documents",
     icon: FileText,
+  },
+  {
+    label: "Case Law",
+    href: "/case-law",
+    icon: BookOpen,
   },
   {
     label: "Cases",
