@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { Check, AlertTriangle, Bot } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Check, AlertTriangle, Bot, Sparkles, CreditCard, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +15,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { TwoFactorSetup } from "@/components/settings/two-factor-setup";
+
+export default function SettingsPageWrapper() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center py-20"><p className="text-sm text-slate-500">Loading settings...</p></div>}>
+      <SettingsPage />
+    </Suspense>
+  );
+}
 
 const aiProviders = [
   {
@@ -43,13 +53,16 @@ interface Settings {
   subscriptionTier: string;
 }
 
-export default function SettingsPage() {
+function SettingsPage() {
   const { update } = useSession();
+  const searchParams = useSearchParams();
   const [settings, setSettings] = useState<Settings | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState("");
+  const [upgrading, setUpgrading] = useState(false);
+  const justUpgraded = searchParams.get("upgraded") === "true";
 
   useEffect(() => {
     async function load() {
@@ -86,6 +99,24 @@ export default function SettingsPage() {
       setError("Failed to save settings");
     }
     setSaving(false);
+  }
+
+  async function handleUpgrade() {
+    setUpgrading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/stripe/checkout", { method: "POST" });
+      if (!res.ok) {
+        throw new Error("Failed to create checkout session");
+      }
+      const { url } = await res.json();
+      if (url) {
+        window.location.href = url;
+      }
+    } catch {
+      setError("Could not start checkout. Please try again.");
+      setUpgrading(false);
+    }
   }
 
   if (!settings) {
@@ -232,6 +263,30 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
+      {/* Two-Factor Authentication */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Shield className="h-4 w-4" />
+            Two-Factor Authentication
+          </CardTitle>
+          <CardDescription>
+            Add an extra layer of security using an authenticator app
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <TwoFactorSetup />
+        </CardContent>
+      </Card>
+
+      {/* Upgrade success message */}
+      {justUpgraded && (
+        <div className="flex items-center gap-2 rounded-md bg-blue-50 p-3 text-sm text-blue-800 border border-blue-200">
+          <Sparkles className="h-4 w-4 shrink-0" />
+          Welcome to Pro! Your account has been upgraded.
+        </div>
+      )}
+
       {/* Subscription */}
       <Card>
         <CardHeader>
@@ -251,9 +306,24 @@ export default function SettingsPage() {
                 Chat history is not saved between sessions. Upgrade to Pro to
                 keep your conversations and access advanced features.
               </p>
-              <Button className="mt-3" size="sm" disabled>
-                Upgrade to Pro (coming soon)
-              </Button>
+              <div className="mt-3 space-y-2">
+                <div className="text-xs text-slate-600">
+                  <p className="font-semibold text-slate-800">Pro Plan &mdash; $19/month</p>
+                  <ul className="mt-1 list-disc list-inside space-y-0.5">
+                    <li>Chat history saved across sessions</li>
+                    <li>Unlimited document uploads</li>
+                    <li>Priority support</li>
+                  </ul>
+                </div>
+                <Button
+                  size="sm"
+                  onClick={handleUpgrade}
+                  disabled={upgrading}
+                >
+                  <CreditCard className="mr-1.5 h-3.5 w-3.5" />
+                  {upgrading ? "Redirecting..." : "Upgrade to Pro — $19/mo"}
+                </Button>
+              </div>
             </div>
           ) : (
             <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
@@ -263,6 +333,9 @@ export default function SettingsPage() {
               <p className="mt-1 text-xs text-blue-700">
                 Chat history is saved. You have access to all features.
               </p>
+              <Button className="mt-3" size="sm" variant="outline" disabled>
+                Manage Subscription (coming soon)
+              </Button>
             </div>
           )}
         </CardContent>

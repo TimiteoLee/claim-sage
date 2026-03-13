@@ -17,37 +17,12 @@ import { UserMenu } from "./user-menu";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
-  {
-    label: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    label: "Chat",
-    href: "/chat",
-    icon: MessageSquare,
-  },
-  {
-    label: "Documents",
-    href: "/documents",
-    icon: FileText,
-  },
-  {
-    label: "Case Law",
-    href: "/case-law",
-    icon: BookOpen,
-  },
-  {
-    label: "Cases",
-    href: "#",
-    icon: FolderOpen,
-    comingSoon: true,
-  },
-  {
-    label: "Settings",
-    href: "/settings",
-    icon: Settings,
-  },
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Chat", href: "/chat", icon: MessageSquare },
+  { label: "Documents", href: "/documents", icon: FileText },
+  { label: "Case Law", href: "/case-law", icon: BookOpen },
+  { label: "Claims", href: "/claims", icon: FolderOpen },
+  { label: "Settings", href: "/settings", icon: Settings },
 ];
 
 interface SidebarProps {
@@ -60,21 +35,18 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile overlay */}
       {open && (
         <div
           className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={onClose}
         />
       )}
-
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r bg-white transition-transform lg:static lg:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        {/* Logo */}
         <div className="flex h-16 items-center justify-between border-b px-4">
           <Link href="/dashboard" className="flex items-center gap-2">
             <Shield className="h-6 w-6 text-blue-600" />
@@ -91,12 +63,12 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             <X className="h-5 w-5" />
           </Button>
         </div>
-
-        {/* Nav */}
         <nav className="flex-1 space-y-1 px-3 py-4">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
+            const isActive =
+              pathname === item.href ||
+              (item.href !== "/dashboard" && pathname.startsWith(item.href + "/"));
             return (
               <Link
                 key={item.label}
@@ -106,23 +78,15 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   isActive
                     ? "bg-blue-50 text-blue-700"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
-                  item.comingSoon && "opacity-50 pointer-events-none"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                 )}
               >
                 <Icon className="h-4 w-4" />
                 {item.label}
-                {item.comingSoon && (
-                  <span className="ml-auto text-[10px] uppercase tracking-wider text-slate-400">
-                    Soon
-                  </span>
-                )}
               </Link>
             );
           })}
         </nav>
-
-        {/* User menu at bottom */}
         <div className="border-t p-3">
           <UserMenu />
         </div>
