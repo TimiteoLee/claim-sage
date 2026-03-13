@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm";
 export async function GET() {
   const session = await auth();
   if (!session?.user?.id) {
-    return new Response("Unauthorized", { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const [record] = await db

@@ -3,12 +3,7 @@ import Stripe from "stripe";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
-
-function getStripe() {
-  return new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: "2026-02-25.clover",
-  });
-}
+import { getStripe } from "@/lib/stripe";
 
 export async function POST(req: NextRequest) {
   const stripe = getStripe();

@@ -5,11 +5,12 @@ import { totpSecrets, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import * as OTPAuth from "otpauth";
 import QRCode from "qrcode";
+import { createTOTP } from "@/lib/totp";
 
 export async function POST() {
   const session = await auth();
   if (!session?.user?.id) {
-    return new Response("Unauthorized", { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   // Get user email for the TOTP label
@@ -20,20 +21,13 @@ export async function POST() {
     .limit(1);
 
   if (!user) {
-    return new Response("User not found", { status: 404 });
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
   // Generate a new TOTP secret
   const secret = new OTPAuth.Secret({ size: 20 });
 
-  const totp = new OTPAuth.TOTP({
-    issuer: "Claim Sage",
-    label: user.email,
-    algorithm: "SHA1",
-    digits: 6,
-    period: 30,
-    secret,
-  });
+  const totp = createTOTP(secret, user.email);
 
   const otpauthUri = totp.toString();
 

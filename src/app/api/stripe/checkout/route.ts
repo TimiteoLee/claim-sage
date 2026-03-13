@@ -1,21 +1,15 @@
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
-
-function getStripe() {
-  return new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: "2026-02-25.clover",
-  });
-}
+import { getStripe } from "@/lib/stripe";
 
 export async function POST() {
   const stripe = getStripe();
   const session = await auth();
   if (!session?.user?.id) {
-    return new Response("Unauthorized", { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   // Get user email from DB
@@ -26,7 +20,7 @@ export async function POST() {
     .limit(1);
 
   if (!user) {
-    return new Response("User not found", { status: 404 });
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
   const priceId = process.env.STRIPE_PRICE_ID;

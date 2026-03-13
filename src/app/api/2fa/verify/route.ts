@@ -5,6 +5,7 @@ import { totpSecrets } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import * as OTPAuth from "otpauth";
 import { z } from "zod";
+import { createTOTP } from "@/lib/totp";
 
 const verifySchema = z.object({
   code: z.string().length(6),
@@ -13,7 +14,7 @@ const verifySchema = z.object({
 export async function POST(req: Request) {
   const session = await auth();
   if (!session?.user?.id) {
-    return new Response("Unauthorized", { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const body = await req.json();
@@ -41,13 +42,7 @@ export async function POST(req: Request) {
   }
 
   // Validate the TOTP code
-  const totp = new OTPAuth.TOTP({
-    issuer: "Claim Sage",
-    algorithm: "SHA1",
-    digits: 6,
-    period: 30,
-    secret: OTPAuth.Secret.fromBase32(record.secret),
-  });
+  const totp = createTOTP(OTPAuth.Secret.fromBase32(record.secret));
 
   const delta = totp.validate({ token: parsed.data.code, window: 1 });
 
